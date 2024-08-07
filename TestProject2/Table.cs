@@ -13,11 +13,27 @@ namespace TestProject2
         [SetUp]
         public void SetUp()
         {
+            ChromeOptions options = new ChromeOptions();
+            options.AddArguments("headless");
+            options.AddArguments("no-sandbox");
+            options.AddArguments("disable-dev-shm-usage");
+            options.AddArguments("disable-gpu");
+            options.AddArguments("window-size=1920x1080");
+            options.AddArguments("disable-extensions");
+            options.AddArguments("remote-debugging-port=9222");
+
             // Create object of ChromeDriver
-            driver = new ChromeDriver();
+            driver = new ChromeDriver(options);
 
             // Add implicit wait
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            driver.Quit();
+            driver.Dispose();
         }
 
         [Test]
@@ -58,13 +74,6 @@ namespace TestProject2
             // Verify the file was created and has content
             Assert.IsTrue(File.Exists(path), "CSV file was not created");
             Assert.IsTrue(new FileInfo(path).Length > 0, "CSV file is empty");
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            // Quit the driver
-            driver.Quit();
         }
     }
 }
